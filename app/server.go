@@ -14,5 +14,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
     http.HandleFunc("/ping", handler)
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("I am root"))
+    })
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
