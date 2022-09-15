@@ -1,38 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-	"strings"
+	"transaction-management/app/controller"
+	"transaction-management/app/database"
+
+	"github.com/gin-gonic/gin"
 )
-
-func pingPongHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "pong")
-}
-
-func transactionsHandler(writer http.ResponseWriter, request *http.Request) {
-	switch request.Method {
-	case http.MethodGet:
-	case http.MethodPost:
-	default:
-		fmt.Fprintf(writer, "Sorry, only GET and POST methods are supported")
-	}
-
-}
-func singleTransactionsHandler(writer http.ResponseWriter, request *http.Request) {
-	id := strings.TrimPrefix(request.URL.Path, "/transaction/")
-	
-}
-func getAllTransactionsHandler(writer http.ResponseWriter, request *http.Request) {
-
-}
-
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("I am root"))
-}
 
 // func HTTPSRedirect(writer http.ResponseWriter,
 // 	request *http.Request) {
@@ -45,13 +18,18 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 // }
 
 func init() {
-	http.HandleFunc("/ping", pingPongHandler)
-	http.HandleFunc("/transaction", transactionsHandler)
-	http.HandleFunc("/transaction/{id}", singleTransactionsHandler)
-	http.HandleFunc("/", rootHandler)
+	database.OpenDatabase()
+	r := gin.Default()
+	{
+		r.GET("/ping", controller.PingPong)
+		r.GET("/transactions", controller.GetTransactions)
+		r.POST("/transactions", controller.AddTransaction)
+		r.GET("/transactions/:id", controller.GetSingleTransaction)
+		r.GET("/accounts/:id", controller.GetSingleAccount)
+	}
+	r.Run()
 }
 
 func main() {
-	http.ListenAndServe(":8080", nil)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
 }
