@@ -24,13 +24,18 @@ func main() {
 	database.OpenDatabase()
 	app := gin.Default()
 	memoryStore := persist.NewMemoryStore(2 * time.Minute)
+	cacheHandler := cache.CacheByRequestURI(memoryStore, 1*time.Minute)
 
 	{
 		app.GET("/ping", controller.PingPong)
-		app.GET("/transactions", cache.CacheByRequestURI(memoryStore, 1*time.Minute), controller.GetTransactions)
+		app.GET("/transactions", cacheHandler, controller.GetTransactions)
 		app.POST("/transactions", controller.AddTransaction)
 		app.GET("/transactions/:id", controller.GetSingleTransaction)
 		app.GET("/accounts/:id", controller.GetSingleAccount)
+		// app.PUT("/transactions", func(c *gin.Context) {
+		// 	c.String(http.StatusMethodNotAllowed, "method not allowed")
+		// })
+		app.HandleMethodNotAllowed = true
 	}
 	app.Run()
 }
