@@ -18,6 +18,9 @@ import (
 // }
 
 func init() {
+}
+
+func main() {
 	database.OpenDatabase()
 	r := gin.Default()
 	{
@@ -28,8 +31,4 @@ func init() {
 		r.GET("/accounts/:id", controller.GetSingleAccount)
 	}
 	r.Run()
-}
-
-func main() {
-
 }
