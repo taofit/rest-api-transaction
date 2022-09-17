@@ -1,9 +1,12 @@
 package main
 
 import (
+	"time"
 	"transaction-management/app/controller"
 	"transaction-management/app/database"
 
+	cache "github.com/chenyahui/gin-cache"
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,18 +20,17 @@ import (
 // 	http.Redirect(writer, request, target, http.StatusTemporaryRedirect)
 // }
 
-func init() {
-}
-
 func main() {
 	database.OpenDatabase()
-	r := gin.Default()
+	app := gin.Default()
+	memoryStore := persist.NewMemoryStore(2 * time.Minute)
+
 	{
-		r.GET("/ping", controller.PingPong)
-		r.GET("/transactions", controller.GetTransactions)
-		r.POST("/transactions", controller.AddTransaction)
-		r.GET("/transactions/:id", controller.GetSingleTransaction)
-		r.GET("/accounts/:id", controller.GetSingleAccount)
+		app.GET("/ping", controller.PingPong)
+		app.GET("/transactions", cache.CacheByRequestURI(memoryStore, 1*time.Minute), controller.GetTransactions)
+		app.POST("/transactions", controller.AddTransaction)
+		app.GET("/transactions/:id", controller.GetSingleTransaction)
+		app.GET("/accounts/:id", controller.GetSingleAccount)
 	}
-	r.Run()
+	app.Run()
 }

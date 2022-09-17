@@ -9,9 +9,9 @@ import (
 )
 
 type Transaction struct {
-	Transaction_id string `json:"transaction_id" binding:"uuid"`
+	Transaction_id string `json:"transaction_id" binding:"required,uuid"`
 	Account_id     string `json:"account_id" binding:"required,uuid"`
-	Amount         int    `json:"amount" binding:"required,number"`
+	Amount         int    `json:"amount" binding:"number"`
 	Created_at     string `json:"created_at"`
 }
 

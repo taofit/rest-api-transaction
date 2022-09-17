@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"transaction-management/app/models"
 
@@ -14,6 +15,8 @@ func PingPong(c *gin.Context) {
 
 func GetTransactions(c *gin.Context) {
 	transactions, err := models.GetTransactions()
+	checkErr(err)
+
 	if err != nil || transactions == nil {
 		c.JSON(http.StatusOK, gin.H{"error": "Transactions not found"})
 		return
@@ -23,7 +26,9 @@ func GetTransactions(c *gin.Context) {
 
 func GetSingleTransaction(c *gin.Context) {
 	var transactionId = c.Param("id")
-	transaction, _ := models.GetSingleTransaction(transactionId)
+	transaction, err := models.GetSingleTransaction(transactionId)
+	checkErr(err)
+
 	if transaction == (models.Transaction{}) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Transaction not found"})
 		return
@@ -45,7 +50,7 @@ func AddTransaction(c *gin.Context) {
 	}
 	transaction, _ := models.GetSingleTransaction(transactionId)
 	if transaction == (models.Transaction{}) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Transaction not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Could not fetch created transaction, it cannot be found"})
 		return
 	}
 
@@ -54,11 +59,19 @@ func AddTransaction(c *gin.Context) {
 
 func GetSingleAccount(c *gin.Context) {
 	var accountId = c.Param("id")
-	account, _ := models.GetSingleAccount(accountId)
+	account, err := models.GetSingleAccount(accountId)
+	checkErr(err)
+
 	if account == (models.Account{}) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Account not found"})
 		return
 	}
 
 	c.JSON(http.StatusOK, account)
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
