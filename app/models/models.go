@@ -84,10 +84,10 @@ func GetSingleTransaction(transactionId string) (Transaction, error) {
 	}
 	var transaction Transaction
 	err := row.Scan(&transaction.Transaction_id, &transaction.Account_id, &transaction.Amount, &transaction.Created_at)
-	if err != nil && err == sql.ErrNoRows {
-		return Transaction{}, nil
-	}
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return Transaction{}, nil
+		}
 		return Transaction{}, err
 	}
 	return transaction, nil
@@ -100,10 +100,10 @@ func GetSingleAccount(accountId string) (Account, error) {
 	}
 	var account Account
 	err := row.Scan(&account.Account_id, &account.Balance)
-	if err != nil && err == sql.ErrNoRows {
-		return Account{}, nil
-	}
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return Account{}, nil
+		}
 		return Account{}, err
 	}
 	return account, nil

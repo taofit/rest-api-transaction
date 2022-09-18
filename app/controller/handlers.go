@@ -6,7 +6,6 @@ import (
 	"transaction-management/app/models"
 
 	"github.com/gin-gonic/gin"
-	// "github.com/go-playground/validator/v10"
 )
 
 func PingPong(c *gin.Context) {

@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS accounts;
 
 CREATE TABLE IF NOT EXISTS transactions (
     id TEXT NOT NULL PRIMARY KEY,
-    account_id int NOT NULL, 
+    account_id TEXT NOT NULL, 
     amount int,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(account_id) REFERENCES accounts(id)

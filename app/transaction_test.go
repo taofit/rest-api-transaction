@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -25,6 +26,19 @@ func TestEmptyTable(t *testing.T) {
 
 	if body := response.Body.String(); body != "{\"error\":\"Transactions not found\"}" {
 		t.Errorf("Expected an empty array. Got %s", body)
+	}
+}
+
+func TestGetNoExistedTransaction(t *testing.T) {
+	clearTable()
+	req, _ := http.NewRequest("GET", "/transactions/32966FEF-283F-4F13-8BFC-638D0A099B22", nil)
+	response := executeRequest(req)
+
+	checkResponseCode(t, http.StatusNotFound, response.Code)
+	var m map[string]string
+	json.Unmarshal(response.Body.Bytes(), &m)
+	if m["error"] != "Transaction not found" {
+		t.Errorf("Expected the value of 'error' key of the response is 'Transaction not found', got '%s'", m["error"])
 	}
 }
 
