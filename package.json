@@ -2,8 +2,7 @@
   "name": "backend-boilerplate",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd app && go build server.go",
-    "start": "./app/server",
+    "start": "cd app && go run .",
     "test": "cypress run"
   },
   "devDependencies": {
