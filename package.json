@@ -2,6 +2,7 @@
   "name": "backend-boilerplate",
   "version": "1.0.0",
   "scripts": {
+    "build": "",
     "start": "cd app && go run .",
     "test": "cypress run"
   },
