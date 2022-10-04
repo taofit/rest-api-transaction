@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"transaction-management/app/models"
 
@@ -14,7 +14,9 @@ func PingPong(c *gin.Context) {
 
 func GetTransactions(c *gin.Context) {
 	transactions, err := models.GetTransactions()
-	checkErr(err)
+	if checkErr(c, err) {
+		return
+	}
 
 	if err != nil || transactions == nil {
 		c.JSON(http.StatusOK, gin.H{"error": "Transactions not found"})
@@ -26,7 +28,9 @@ func GetTransactions(c *gin.Context) {
 func GetSingleTransaction(c *gin.Context) {
 	var transactionId = c.Param("id")
 	transaction, err := models.GetSingleTransaction(transactionId)
-	checkErr(err)
+	if checkErr(c, err) {
+		return
+	}
 
 	if transaction == (models.Transaction{}) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Transaction not found"})
@@ -62,8 +66,9 @@ func AddTransaction(c *gin.Context) {
 func GetSingleAccount(c *gin.Context) {
 	var accountId = c.Param("id")
 	account, err := models.GetSingleAccount(accountId)
-	checkErr(err)
-
+	if checkErr(c, err) {
+		return
+	}
 	if account == (models.Account{}) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Account not found"})
 		return
@@ -88,8 +93,11 @@ func isRequestHeaderValid(c *gin.Context) bool {
 	return true
 }
 
-func checkErr(err error) {
+func checkErr(c *gin.Context, err error) bool {
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error."})
+		return true
 	}
+	return false
 }

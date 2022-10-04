@@ -46,10 +46,10 @@ func GetTransactions() ([]Transaction, error) {
 
 func AddTransaction(txI TransactionInput) string {
 	tx, err := database.DB.Begin()
-	var transactionId = generateUUID()
 	if err != nil {
 		return ""
 	}
+	var transactionId = generateUUID()
 
 	_, err = tx.Exec("INSERT INTO transactions (id, account_id, amount) VALUES (?, ?, ?)",
 		transactionId, txI.Account_id, txI.Amount)
